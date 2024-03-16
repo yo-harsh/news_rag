@@ -21,9 +21,9 @@
 <body class="bg-chatblack-50">
     <div class="flex h-[100vh] text-white" style="background-color: #0E2D23;">
         <div class="left bg-[#202123] w-2/12 side_bar" style=" width: 250px !important; background:#041b19;">
-            {% csrf_token %}
+
             <form id="fileUploadForm" method="POST" enctype="multipart/form-data">
-                <div id="key" class="text-center w-full text-4x1 font-bold my-10 "
+                <div id="textkey" class="text-center w-full text-4x1 font-bold my-10 "
                     style="font-size:23px !important; color:#F8D49A">
                     HUGGINGFACE TOKEN
                 </div>
@@ -43,7 +43,7 @@
                     </svg>
                 </button>
 
-                <div id="key" class="text-center w-full text-4x1 font-bold my-10 "
+                <div id="linkkey" class="text-center w-full text-4x1 font-bold my-10 "
                     style="position: absolute; bottom:100px; width: 240px; font-size:23px !important; color:#F8D49A">
                     NEWS LINK
                 </div>

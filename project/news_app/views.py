@@ -28,39 +28,39 @@ def get_latest_news():
 
 # def get_news_data(url:str):
 
+Token = []
+
 @csrf_exempt
 def upload_news_data(request):
     try:
-        print('done')
+        print('1done')
         key = request.POST.get('key')
         print(key)
-    except Exception as e:
-        return JsonResponse({'error not Token': str(e)}, status=400)
-
-    try:
-        print('done')
+        print('2done')
         link = request.POST.get('link')
         print(link)
-    except Exception as e:
-        return JsonResponse({'error not Link': str(e)}, status=400)
-
-    try:
-        print('done')
+        print('3done')
         news_data = get_data(str(link))
-        NewsLinks.objects.create(link,news_data)
+        NewsLinks.objects.create(link=link,text=news_data)
         response = JsonResponse({'message': 'News data uploaded successfully'})
-        return key, response
+        Token.append(key)
+        print('saved')
+        return response
     except Exception as e:
         return JsonResponse({'error not saved': str(e)}, status=400)
 
 @csrf_exempt
 def chat_with_bot(request):
+
     if request.method == 'POST':
         msg_data = json.loads(request.body.decode('utf-8'))
         question = msg_data.get('message')
 
         if question:
             try:
+                print(Token)
+                HUGGINGFACEHUB_API_TOKEN = Token[0]
+                print(HUGGINGFACEHUB_API_TOKEN)
                 print('done')
                 data = get_latest_news()
                 text_data = data.text
