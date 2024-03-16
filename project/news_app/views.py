@@ -1,6 +1,17 @@
+import json
 from django.shortcuts import render
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from .models import NewsLinks
+from .scraper import get_data
 
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.llms import HuggingFaceEndpoint
+from langchain.prompts import PromptTemplate
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import ConversationalRetrievalChain
 # Create your views here.
 
 def home_page(request):
@@ -9,79 +20,103 @@ def home_page(request):
 def news_app(request):
     return render(request, 'index.html')
 
+
+def get_latest_news():
+    # Query the database to get the most recent entry
+    latest_news = NewsLinks.objects.latest('created_at')
+    return latest_news
+
+# def get_news_data(url:str):
+
 @csrf_exempt
-def upload_pdf(request):
-    print(1)
-    key1 = request.POST.get('key')
-    print(key1)
-    global global_vector_db, global_convo_chain
-    if request.method == 'POST':
+def upload_news_data(request):
+    try:
+        print('done')
+        key = request.POST.get('key')
+        print(key)
+    except Exception as e:
+        return JsonResponse({'error not Token': str(e)}, status=400)
 
-        obj = request.FILES['file']
-        if obj:
-            try:
-                # load_dotenv()
-                print(key1)
-                OPENAI_API_KEY = key1
-                print(OPENAI_API_KEY)
-                doc = PdfFiles.objects.create(file=obj)
-                doc.save()
-                print('saved')
-                file_list.append(doc.file.name)
-                print(file_list[-1])
-                print('start')
+    try:
+        print('done')
+        link = request.POST.get('link')
+        print(link)
+    except Exception as e:
+        return JsonResponse({'error not Link': str(e)}, status=400)
 
-                # Update the global variables when a new PDF is uploaded
-                pdf_path = os.path.join(settings.MEDIA_ROOT, file_list[-1])
-                raw_text = get_pdf_text(pdf_path)
-                print(0)
-                chunks = get_text_chunks(raw_text)
-                print(1)
-                vector = get_vectordb(chunks,OPENAI_API_KEY)
-                print(2)
-                convo = memorydb(vector,OPENAI_API_KEY)
-                print(3)
-
-                # Lock the global variables while updating
-                with vector_db_lock:
-                    global_vector_db = vector
-                    global_convo_chain = convo
-
-
-
-                return JsonResponse({'message': 'CSV11 uploaded successfully'})
-            except Exception as e:
-                return JsonResponse({'error': str(e)}, status=400)
-        else:
-            return JsonResponse({'error': 'No file uploaded'}, status=400)
-    else:
-        return HttpResponseBadRequest("Invalid request method")
-
-# View for chatting with the bot
-
+    try:
+        print('done')
+        news_data = get_data(str(link))
+        NewsLinks.objects.create(link,news_data)
+        response = JsonResponse({'message': 'News data uploaded successfully'})
+        return key, response
+    except Exception as e:
+        return JsonResponse({'error not saved': str(e)}, status=400)
 
 @csrf_exempt
 def chat_with_bot(request):
     if request.method == 'POST':
         msg_data = json.loads(request.body.decode('utf-8'))
-        msg = msg_data.get('message')
+        question = msg_data.get('message')
 
-        if msg:
+        if question:
             try:
-                # load_dotenv()
+                print('done')
+                data = get_latest_news()
+                text_data = data.text
+                text_splitter = CharacterTextSplitter(
+                separator="\n",
+                chunk_size=1100,
+                chunk_overlap=200,
+                length_function=len
+                )
+                chunks = text_splitter.split_text(text_data)
+                embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1",model_kwargs={"trust_remote_code":True})
+                db = FAISS.from_texts(texts=chunks, embedding=embeddings)
+                memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
+                db_retriever = db.as_retriever(search_type="similarity",search_kwargs={"k": 4})
 
+                prompt_template = """<s>[INST]
+                This is a chat template and As a professional news reporter specializing in giving top headlines.
+                You will delve into complex and potentially contentious topics and transparency ignoring the could be advertisement.
+                Your focus could be on markets up down by %, data science, AI, Machine learning news with top news in technology,
+                corporate and business top headlines. The aim is to uncover top and exciting news with transparency without adding anything irrelevant,
+                your primary objective is to provide accurate and concise answer based on the user's questions.
+                Do not generate your own questions and unnecessary detail. You will adhere strictly to the instructions provided,
+                offering relevant context from the knowledge base while avoiding unnecessary details. Your responses will be brief,
+                to the point, and in compliance with the established format. If a question falls outside the given context,
+                you will refrain from utilizing the chat history and instead rely on your own knowledge base to generate an appropriate response.
+                You will prioritize the user's query and refrain from adding additional information. The aim is to deliver professional,
+                precise, and contextually relevant question answer pertaining to the context,
+                don't pose any self question and only aten user query with precis information.
+                CONTEXT: {context}
+                CHAT HISTORY: {chat_history}
+                QUESTION: {question}
+                ANSWER:
+                </s>[INST]
+                """
+                prompt = PromptTemplate(template=prompt_template,
+                                        input_variables=['context', 'question', 'chat_history'])
+                llm_model = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+                llm = HuggingFaceEndpoint(
+                    repo_id=llm_model,
+                    # model_kwargs={"temperature": temperature, "max_new_tokens": max_tokens, "top_k": top_k, "load_in_8bit": True}
+                    temperature = 0.6,
+                    max_new_tokens = 1024,
+                    top_k = 3,
+                    load_in_8bit = True,
+                )
+                qa = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                memory=memory,
+                retriever=db_retriever,
+                combine_docs_chain_kwargs={'prompt': prompt}
+                )
+                result = qa.invoke(input=question)
+                print(result)
 
-
-                # Check if a PDF has been uploaded
-                with vector_db_lock:
-                    vector_db = global_vector_db
-                    convo_chain = global_convo_chain
-
-                if not vector_db or not convo_chain:
-                    return JsonResponse({'error': 'No PDF file uploaded'}, status=400)
-
-                # Use the stored vector database and conversation chain for chat
-                output = convo_chain.run(msg)
+                # use the result
+                output = result["answer"]
                 return JsonResponse({'output': output})
             except Exception as e:
                 return JsonResponse({'error': str(e)}, status=400)
@@ -89,4 +124,3 @@ def chat_with_bot(request):
             return JsonResponse({'error': 'No message provided'}, status=400)
     else:
         return HttpResponseBadRequest("Invalid request method")
-
