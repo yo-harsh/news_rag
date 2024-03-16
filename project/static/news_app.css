@@ -1,0 +1,374 @@
+*,
+::before,
+::after {
+    box-sizing: border-box;
+    /* 1 */
+    border-width: 0;
+    /* 2 */
+    border-style: solid;
+    /* 2 */
+    border-color: #e5e7eb;
+    /* 2 */
+}
+
+
+
+
+
+.side_bar{
+    width: 100px !important;
+}
+.submit_button{
+    margin-left: 20px !important;
+}
+
+
+
+body {
+    margin: 0;
+    /* 1 */
+
+
+    overflow: hidden !important;
+    /* 2 */
+}
+
+
+
+
+
+
+button,
+input,
+textarea {
+    font-family: inherit;
+    /* 1 */
+    font-size: 100%;
+    /* 1 */
+    font-weight: inherit;
+    /* 1 */
+    line-height: inherit;
+    /* 1 */
+    color: inherit;
+    /* 1 */
+    margin: 0;
+    /* 2 */
+    padding: 0;
+    /* 3 */
+}
+
+
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+    /* -webkit-appearance: button; */
+    /* 1 */
+    background-color: transparent;
+    /* 2 */
+    background-image: none;
+    /* 2 */
+}
+
+
+
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+    opacity: 1;
+    /* 1 */
+    color: black;
+    /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+    opacity: 1;
+    /* 1 */
+    color: rgb(26, 25, 25);
+    /* 2 */
+}
+
+
+
+.relative {
+    position: relative;
+}
+
+.-left-20 {
+    left: -5rem;
+}
+
+.m-2 {
+    margin: 0.5rem;
+}
+
+.m-4 {
+    margin: 1rem;
+}
+
+.m-auto {
+    margin: auto;
+}
+
+.mx-4 {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.mx-8 {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.my-10 {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.my-2 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.my-24 {
+    margin-top: 6rem;
+    margin-bottom: 6rem;
+}
+
+.mr-1 {
+    margin-right: 0.25rem;
+}
+
+.mt-52 {
+    margin-top: 13rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.h-4 {
+    height: 1rem;
+}
+
+.h-6 {
+    height: 1.5rem;
+}
+
+.h-9 {
+    height: 2.25rem;
+}
+
+.h-\[100vh\] {
+    height: 100vh;
+}
+
+.h-fit {
+    height: -moz-fit-content;
+    height: fit-content;
+}
+
+.w-10\/12 {
+    width: 83.333333%;
+}
+
+.w-2\/12 {
+    width: 16.666667%;
+}
+
+.w-4 {
+    width: 1rem;
+}
+
+.w-6 {
+    width: 1.5rem;
+}
+
+.w-9 {
+    width: 2.25rem;
+}
+
+.w-\[13vw\] {
+    width: 13vw;
+}
+
+.w-\[40vw\] {
+    width: 40vw;
+}
+
+.w-\[43vw\] {
+    width: 43vw;
+}
+
+.w-\[50vw\] {
+    width: 50vw;
+}
+
+.w-\[90\%\] {
+    width: 90%;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-around {
+    justify-content: space-around;
+}
+
+.rounded-md {
+    border-radius: 0.375rem;
+}
+
+
+.p-4 {
+    padding: 1rem;
+}
+
+.px-10 {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+}
+
+.px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+}
+
+.py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.py-7 {
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+}
+
+.pl-10 {
+    padding-left: 2.5rem;
+}
+
+.pl-16 {
+    padding-left: 4rem;
+}
+
+.pr-10 {
+    padding-right: 2.5rem;
+}
+
+.pt-80 {
+    padding-top: 20rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-gray-400 {
+    --tw-text-opacity: 1;
+    color: rgb(156 163 175 / var(--tw-text-opacity));
+}
+
+.text-white {
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.underline {
+    text-decoration-line: underline;
+}
+
+.opacity-70 {
+    opacity: 0.7;
+}
+
+.opacity-80 {
+    opacity: 0.8;
+}
+
+.hover\:bg-gray-700:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
+.hover\:opacity-70:hover {
+    opacity: 0.7;
+}
+
+
+.chat-log {
+    height: 300px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+
+}
+
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.chat-log::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .chat-log {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }

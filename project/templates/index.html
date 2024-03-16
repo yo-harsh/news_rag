@@ -1,0 +1,191 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'news_app.css' %}">
+    <link rel="shortcut icon" href="https://chat.openai.com/favicon.ico" type="image/x-icon">
+    <style>
+        .right2 {
+            display: none;
+        }
+    </style>
+    <title>CHAT_HERE</title>
+</head>
+
+<body class="bg-chatblack-50">
+    <div class="flex h-[100vh] text-white" style="background-color: #0E2D23;">
+        <div class="left bg-[#202123] w-2/12 side_bar" style=" width: 250px !important; background:#041b19;">
+            {% csrf_token %}
+            <form id="fileUploadForm" method="POST" enctype="multipart/form-data">
+                <div id="key" class="text-center w-full text-4x1 font-bold my-10 "
+                    style="font-size:23px !important; color:#F8D49A">
+                    HUGGINGFACE TOKEN
+                </div>
+                <input id="keyInput" class="w-full p-4 bg-gray-600 rounded-md"
+                    style="width:250px !important; height: 50px !important; position: relative; bottom: 20px; background-color: #fae3bd;  color:black !important;"
+                    placeholder="Enter your token" type="password" name="key" required>
+
+                <button style="position: relative; bottom:12px; z-index: -1;"
+                    class="w-[100%] py-2 m-1 px-10 space-x-2 border-white border rounded-md flex mx-4 justify-start items-center hover:opacity-70"
+                    style="background-color: #fae3bd;  color:black !important;">
+                    <span class="submit_button">Submit</span>
+                    <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
+                        style="margin-right: 40px !important;" stroke-linecap="round" stroke-linejoin="round"
+                        class="h-4 w-4 mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+
+                <div id="key" class="text-center w-full text-4x1 font-bold my-10 "
+                    style="position: absolute; bottom:100px; width: 240px; font-size:23px !important; color:#F8D49A">
+                    NEWS LINK
+                </div>
+                <input type="text" class="w-full p-4 bg-gray-600 rounded-md"
+                    style="position: absolute; bottom:80px; width: 240px; background-color: #fae3bd !important;  color:black !important;"
+                    id="linkInput" placeholder="Enter your link" name="file" required>
+                <button
+                    style="position: absolute; bottom:30px; background-color: #fae3bd !important;  color:black !important;"
+                    class="w-[100%] py-2 m-1 px-10 space-x-2 border-white border rounded-md flex mx-4 justify-start items-center hover:opacity-70">
+                    <span class="submit_button">Submit</span>
+                    <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
+                        style="margin-right: 40px !important;" stroke-linecap="round" stroke-linejoin="round"
+                        class="h-4 w-4 mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="chats flex flex-col justify-center items-center space-y-2">
+
+
+                <!-- dont remove -->
+                <div
+                    class="chat space-x-2 opacity-80 w-[90%] px-5 py-2 rounded-md bg-gray-600 cursor-pointer flex justify-start items-center" style="z-index: -1;">
+                    <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+                        stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+
+                </div>
+                <!-- don't remove -->
+
+
+            </div>
+
+        </div>
+
+
+        <div class="right1 w-10/12 flex justify-center items-center flex-col">
+            <div class="text-center w-full text-4xl font-bold my-10"
+                style="position: relative; top:100px; color:#F8D49A">
+                Chat_here &lt;/&gt;
+            </div>
+            <div class="itemsrow flex py-4 w-[43vw] justify-around">
+
+            </div>
+
+
+
+
+
+
+
+            <div class="input w-full text-center my-24 flex items-center justify-center flex-col">
+                <div class="chat-container">
+                    <!-- Loading spinner -->
+                    <div id="loadingSpinner"
+                        style=" position:relative; bottom:50px;display:none; text-align: center; color:#F8D49A">
+                        <div class="spinner"></div>
+                        <p>Loading...</p>
+                    </div>
+
+                    <!-- Chat log -->
+                    <div class="chat-log w-full p-4 bg-gray-600 rounded-md" id="chatMessages" style="width: 1100px !important; height:500px; position:relative; bottom:50px;   background-color: #7DBCB6;
+                    color: black !important; ">
+                        <!-- Chat messages will be displayed here -->
+                    </div>
+                </div>
+                <div class="buttonsvg pl-16 w-[50vw] flex" style="position: relative; bottom:50px;">
+                    <textarea class="w-full p-4 bg-gray-600 rounded-md" placeholder="Send a Message" type="text"
+                        name="text" id="messageInput" style="resize:none;   background-color: #7DBCB6;
+                        color: black !important; "></textarea>
+
+                    <button id="sendMessage" class="relative -left-20 pl-10">
+                        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
+                            stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em" width="1em"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+
+
+
+                </div>
+
+                <button class="reset-button" onclick="clearChat()">
+                    <svg width="120px" height="120px" viewBox="-2.1 -2.1 25.20 25.20" xmlns="http://www.w3.org/2000/svg" fill="#000000" transform="rotate(0)" stroke="#000000" stroke-width="1.365">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <g fill="none" fill-rule="evenodd" stroke="#acaaaa" stroke-linecap="round" stroke-linejoin="round" transform="matrix(0 1 1 0 2.5 2.5)">
+                                <path d="m3.98652376 1.07807068c-2.38377179 1.38514556-3.98652376 3.96636605-3.98652376 6.92192932 0 4.418278 3.581722 8 8 8s8-3.581722 8-8-3.581722-8-8-8"></path>
+                                <path d="m4 1v4h-4" transform="matrix(1 0 0 -1 0 6)"></path>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+
+                <!-- <div class="text-center w-full text-4xl font-bold"
+                    style="position: relative; bottom:15px; color:#F8D49A">
+                    Content Gen.
+                </div>
+                <a href="http://127.0.0.1:8000/d/"><svg xmlns="http://www.w3.org/2000/svg" height="1.75em"
+                        style="z-index: 100; position:relative; left:390px; bottom:45px; color:green;"
+                        viewBox="0 0 512 512">
+                        <style>
+                            svg {
+                                fill: #3a9188
+                            }
+                        </style>
+                        <path
+                            d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
+                    </svg></a>
+
+
+                <textarea class="chat-log w-full p-4 rounded-md" id="pdf_text" placeholder="generate your PDF FILE here" type="text" style="width: 830px !important; position:relative; bottom:40px; height: 200px; resize: none;  background-color: #8ED2B2
+                    ;
+                    color: black !important; ">
+
+                        </textarea> -->
+
+
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+
+    </div>
+    <!-- JavaScript -->
+    <script>
+        function clearChat() {
+            document.getElementById('chatMessages').innerHTML = ''; // Clear the chat messages
+        }
+    </script>
+    <script src="{% static 'news_app.js' %}"></script>
+</body>
+
+</html>
