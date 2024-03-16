@@ -7,5 +7,9 @@ class NewsLinks(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        # Specify the custom table name
+        db_table = 'news_data'
+
     def __str__(self):
         return f"Entry: {self.link}"
