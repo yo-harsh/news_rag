@@ -62,6 +62,8 @@ def chat_with_bot(request):
                 HUGGINGFACEHUB_API_TOKEN = Token[0]
                 print(HUGGINGFACEHUB_API_TOKEN)
                 print('done')
+                import torch
+                # Free up GPU memory
                 data = get_latest_news()
                 text_data = data.text
                 text_splitter = CharacterTextSplitter(
@@ -70,9 +72,13 @@ def chat_with_bot(request):
                 chunk_overlap=200,
                 length_function=len
                 )
+                print('yo')
                 chunks = text_splitter.split_text(text_data)
                 embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1",model_kwargs={"trust_remote_code":True})
+                print('go')
                 db = FAISS.from_texts(texts=chunks, embedding=embeddings)
+                print('fin')
+                torch.cuda.empty_cache()
                 memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
                 db_retriever = db.as_retriever(search_type="similarity",search_kwargs={"k": 4})
 
@@ -106,12 +112,14 @@ def chat_with_bot(request):
                     top_k = 3,
                     load_in_8bit = True,
                 )
+                print('got-it')
                 qa = ConversationalRetrievalChain.from_llm(
                 llm=llm,
                 memory=memory,
                 retriever=db_retriever,
                 combine_docs_chain_kwargs={'prompt': prompt}
                 )
+                print('done')
                 result = qa.invoke(input=question)
                 print(result)
 
