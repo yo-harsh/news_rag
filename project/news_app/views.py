@@ -5,11 +5,13 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import NewsLinks
 from .scraper import get_data
 
+from dotenv import load_dotenv
+from langchain.chains import LLMChain
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.llms import HuggingFaceEndpoint
-from langchain.prompts import PromptTemplate
+from langchain.prompts import ChatPromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 # Create your views here.
@@ -49,6 +51,29 @@ def upload_news_data(request):
     except Exception as e:
         return JsonResponse({'error not saved': str(e)}, status=400)
 
+
+def chat(question:str,llm, memory, db_retriever, prompt):
+    try:
+        chain = ConversationalRetrievalChain.from_llm(
+            llm=llm,
+            memory=memory,
+            retriever=db_retriever,
+            combine_docs_chain_kwargs={'prompt': prompt}
+
+        )
+
+        # question_generator_chain = LLMChain(llm=llm, prompt=prompt)
+        # chain = ConversationalRetrievalChain(
+        #     retriever=db_retriever,
+        #     question_generator=question_generator_chain,
+        # )
+
+        result = chain.invoke(input=question)
+        return result
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error no chat': str(e)}, status=400)
+
 @csrf_exempt
 def chat_with_bot(request):
 
@@ -58,9 +83,7 @@ def chat_with_bot(request):
 
         if question:
             try:
-                print(Token)
-                HUGGINGFACEHUB_API_TOKEN = Token[0]
-                print(HUGGINGFACEHUB_API_TOKEN)
+                load_dotenv()
                 print('done')
                 import torch
                 # Free up GPU memory
@@ -101,7 +124,7 @@ def chat_with_bot(request):
                 ANSWER:
                 </s>[INST]
                 """
-                prompt = PromptTemplate(template=prompt_template,
+                prompt = ChatPromptTemplate(template=prompt_template,
                                         input_variables=['context', 'question', 'chat_history'])
                 llm_model = "mistralai/Mixtral-8x7B-Instruct-v0.1"
                 llm = HuggingFaceEndpoint(
@@ -113,20 +136,14 @@ def chat_with_bot(request):
                     load_in_8bit = True,
                 )
                 print('got-it')
-                qa = ConversationalRetrievalChain.from_llm(
-                llm=llm,
-                memory=memory,
-                retriever=db_retriever,
-                combine_docs_chain_kwargs={'prompt': prompt}
-                )
-                print('done')
-                result = qa.invoke(input=question)
+                result = chat(question, llm, memory, db_retriever, prompt)
                 print(result)
 
                 # use the result
                 output = result["answer"]
                 return JsonResponse({'output': output})
             except Exception as e:
+                print(e)
                 return JsonResponse({'error': str(e)}, status=400)
         else:
             return JsonResponse({'error': 'No message provided'}, status=400)

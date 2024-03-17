@@ -13,14 +13,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData();
         formData.append("link", link.value);
         formData.append("key", apiKey.value); // Append the API key
-        console.log(link.value)
-        console.log(apiKey.value)
 
         // Show loading spinner while uploading
         loadingSpinner.style.display = "block";
 
-        // Send the PDF file to the server
-        fetch("http://localhost:8000/upload_data/", { // Update the URL as needed
+        // Send the data to the server
+        fetch("http://localhost:8000/upload_news_data/", { // Update the URL as needed
             method: "POST",
             body: formData,
             headers: {
@@ -32,14 +30,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Hide loading spinner after upload
                 loadingSpinner.style.display = "none";
 
-                // Display the response from the server in the chat
-                chatMessages.innerHTML += `<div><strong>User:</strong>got-it !</div>`;
+                // Display the response from the server
+                console.log(data);
             })
             .catch((error) => {
                 // Hide loading spinner on error
                 loadingSpinner.style.display = "none";
 
-                console.error("Error uploading PDF:", error);
+                console.error("Error:", error);
             });
     });
 
@@ -227,11 +225,21 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Function to get CSRF token from cookies
+    // Function to get CSRF token
     function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 });
 
