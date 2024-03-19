@@ -23,7 +23,7 @@ def get_link(scraped):
     return link_list
 
 def get_content(link_list):
-    shorten_link_list = link_list[0:3]
+    shorten_link_list = link_list[0:21]
 
     link_list_content = []
 
