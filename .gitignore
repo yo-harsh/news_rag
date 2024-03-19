@@ -1,5 +1,5 @@
 news_env/
-**/.env
+**/.env/
 **/.env*
 **/__pycache__/
 news_rag/project/news_app/.env
