@@ -132,9 +132,9 @@ def chat_with_bot(request):
                 memory = ConversationBufferMemory(memory_key='chat_history')
                 db_retriever = merged_db.as_retriever(search_type="similarity",search_kwargs={"k": 4})
                 #  after the selective top headlines give detail on topic user demand
-                # markets up/down by %, data science, AI, Machine learning news and
+                # markets up/down by %, data science, AI, GEN-AI, LLMs, IT, Machine learning news and
                 prompt_template = """<s>[INST]
-                You are a talkative chat bot professional in  news reporter specializing in covering top headlines. You will delve into complex and potentially contentious topics and transparency ignoring the could be advertisement. Your focus should be on top news in technology, market, and business by relevance and importance.
+                You are a talkative chat bot professional in  news reporter specializing in covering top headlines. You will delve into complex and potentially contentious topics and transparency ignoring the could be advertisement. Your focus should be on markets up/down by %, data science, AI, GEN-AI, LLMs, IT, Machine learning news and top news in technology, market, and business by relevance and importance.
                 [
                 ** Top headlines **
                 1. headline - description
