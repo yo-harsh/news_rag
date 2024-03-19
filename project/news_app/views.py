@@ -41,7 +41,7 @@ def upload_news_data(request):
         print(link)
         print('3done')
         news_data = get_data(str(link))
-        NewsLinks.objects.create(link=link,text=news_data)
+        NewsLinks.objects.create(link='example.com', text=json.dumps(news_data))
         response = JsonResponse({'message': 'News data uploaded successfully'})
         print('saved')
         return response
@@ -84,6 +84,13 @@ def chat_with_bot(request):
                 print('started')
                 # Free up GPU memory
                 data = get_latest_news()
+
+                text = json.loads(data.text)
+
+                # Check if text data is not None and is a string
+                # text_data_list = [news_link.text for news_link in data]
+                # print(len(text_data_list))
+
                 # text_data = data.text
                 # text_splitter = CharacterTextSplitter(
                 # separator="\n",
@@ -96,13 +103,13 @@ def chat_with_bot(request):
 
                 # operation
                 chunk_size = 3
-                chunked_data = [data[i:i+3] for i in range(0, len(data), chunk_size)]
+                chunked_data = [text[i:i+3] for i in range(0, len(text), chunk_size)]
 
                 faissdict_db = {}
 
                 embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1",model_kwargs={"trust_remote_code":True})
                 for i, chunk in enumerate(chunked_data, start=1):
-                    db = FAISS.from_text(chunk, embeddings)
+                    db = FAISS.from_texts(chunk, embeddings)
                     faissdict_db[f'db{i}'] = db
 
                 print(faissdict_db)
@@ -118,14 +125,14 @@ def chat_with_bot(request):
                 db_retriever = db.as_retriever(search_type="similarity",search_kwargs={"k": 4})
 #  after the selective top headlines give detail on topic user demand
                 prompt_template = """<s>[INST]
-                This is a chat template and As a professional news reporter specializing in giving top headlines. You will delve into complex and potentially contentious topics and transparency ignoring the could be advertisement. Your focus could be on markets up down by %, data science, AI, Machine learning news with top news in technology, corporate and business top headlines.
-                [** Top headlines **
-                - <b>market goes up/down by this much %</b>\n
-                - <b>nifty50 all time high/low</b>\n
-                - <b>job market in india growing</b>\n
-                - <b>todays business top headline abc company make this much money</b>\n
-                - <b>this is revolutionary tech this will impact big on future technology</b>\n]
-                this is sample blueprint for how should you answer[headlines in bold] and don't forgot to add "\n" before new line. The aim is to uncover top and exciting news with short and summarized information, your primary objective is to provide accurate and concise answer based on the user's questions structure it right and keep it short. "Do not generate your own questions and unnecessary detail." You will adhere strictly to the instructions provided, offering relevant context from the knowledge base while avoiding unnecessary details. Your responses will be brief, to the point, and in compliance with the established format. If a question falls outside the given context, you will refrain from utilizing the chat history and instead rely on your own knowledge base to generate an appropriate response. You will prioritize the user's query and refrain from adding additional information. The aim is to deliver professional, precise, and contextually relevant question answer pertaining to the context, don't pose any self question and only aten user query with precis information.
+                You are a professional news reporter specializing in covering top headlines. You will delve into complex and potentially contentious topics and transparency ignoring the could be advertisement. Your focus should be on markets up down by %, data science, AI, Machine learning news and top news in technology, market, and business.
+                [
+                ** Top headlines **
+                1. - <b>headline from context</b>\n
+                2. - <b>headline from context</b>\n
+                3. - <b>headline from context</b>\n
+                ]
+                this is sample blueprint for how should you answer[headlines in bold] and don't forgot to add "\n" before new line. The aim is to uncover top and exciting news with short and summarized information, your primary objective is to provide accurate and concise headline followup with 1-2 line description on headline, based on the user's questions and remember to keep it short. "Do not generate your own questions and unnecessary detail." You will adhere strictly to the instructions provided, while avoiding unnecessary details. Your responses will be brief, to the point. If a question falls outside the given context, just say don't know. You will prioritize the user's query and refrain from adding additional information. The aim is to deliver professional, precise, and contextually relevant answer pertaining to the context, don't pose any self question and aten user query with precis information.
                 CONTEXT: {context}
                 CHAT HISTORY: {chat_history}
                 QUESTION: {question}
@@ -140,7 +147,7 @@ def chat_with_bot(request):
                     # model_kwargs={"temperature": temperature, "max_new_tokens": max_tokens, "top_k": top_k, "load_in_8bit": True}
                     temperature = 0.6,
                     max_new_tokens = 1024,
-                    top_k = 3,
+                    top_k = 5,
                     load_in_8bit = True,
                 )
                 print('got-it')

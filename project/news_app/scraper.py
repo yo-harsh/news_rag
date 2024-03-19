@@ -38,7 +38,7 @@ def get_content(link_list):
         p_tags = [tag.text.strip() for tag in soup.find_all('p')]
 
         # Combine all the tags into a single list for this link
-        pre_link_content = ["Heading: "] + h1_tags + ["Description: "] + h2_tags + ["Detail "] +  p_tags
+        pre_link_content = ["Headline: "] + h1_tags + ["Description: "] + h2_tags + ["Detail "] +  p_tags
         link_content = ' '.join(pre_link_content)
         # Append the combined content list to link_content_list
         link_list_content.append(link_content)
