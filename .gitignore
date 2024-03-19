@@ -4,4 +4,4 @@ news_env/
 
 **/__pycache__/
 
-project/news_app/scraper.py/
+scraper.py
