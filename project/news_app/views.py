@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from .models import NewsLinks
-from .scraper import get_data
+from .scraper import get_data # dummy_scraper
 
 from dotenv import load_dotenv
 from langchain_community.vectorstores.faiss import FAISS
