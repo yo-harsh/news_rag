@@ -1,7 +1,4 @@
 news_env/
-
 .env
-
 **/__pycache__/
-
 scraper.py
