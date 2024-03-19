@@ -137,35 +137,41 @@ def chat_with_bot(request):
                 You are a talkative chat bot professional in  news reporter specializing in covering top headlines. You will delve into complex and potentially contentious topics and transparency ignoring the could be advertisement. Your focus should be on top news in technology, market, and business by relevance and importance.
                 [
                 ** Top headlines **
+                1. headline - description
+                2. headline - description
+                3. headline - description
+                ...
                 ]
+                </s>[INST]
+                [INST]
                 this is sample blueprint for how should you answer[headlines in bold] and don't forgot to add "\n" before new line. The aim is to uncover top and exciting news with short and summarized information, your primary objective is to provide accurate and concise headline followup with 1-2 line description on headline, based on the user's questions and remember to keep it short. "Do not generate your own questions and unnecessary detail." You will adhere strictly to the instructions provided, while avoiding unnecessary details. Your responses will be brief, to the point. If a question falls outside the given context, just say don't know. You will prioritize the user's query and refrain from adding additional information. The aim is to deliver professional, precise, and contextually relevant answer pertaining to the context, don't pose any self question and aten user query with precis information.
                 CONTEXT: {context}
                 CHAT HISTORY: {chat_history}
                 QUESTION: {question}
                 ANSWER:
-                </s>[INST]
+                [INST]
                 """
                 prompt = PromptTemplate(template=prompt_template,
                                         input_variables=['context', 'question', 'chat_history'])
 
-                TOGETHER_AI_API = os.environ['TOGETHER_AI_API']
-                llm = Together(
-                model="mistralai/Mistral-7B-Instruct-v0.2",
-                temperature=0.5,
-                max_tokens=1024,
-                together_api_key=f"{TOGETHER_AI_API}"
+            #     TOGETHER_AI_API = os.environ['TOGETHER_AI_API']
+            #     llm = Together(
+            #     model="mistralai/Mistral-7B-Instruct-v0.2",
+            #     temperature=0.5,
+            #     max_tokens=512,
+            #     together_api_key=f"{TOGETHER_AI_API}"
 
-            )
+            # )
 
-                # llm_model = "mistralai/Mixtral-8x7B-Instruct-v0.1"
-                # llm = HuggingFaceEndpoint(
-                #     repo_id=llm_model,
-                #     # model_kwargs={"temperature": temperature, "max_new_tokens": max_tokens, "top_k": top_k, "load_in_8bit": True}
-                #     temperature = 0.6,
-                #     max_new_tokens = 1024,
-                #     top_k = 5,
-                #     load_in_8bit = True,
-                # )
+                llm_model = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+                llm = HuggingFaceEndpoint(
+                    repo_id=llm_model,
+                    # model_kwargs={"temperature": temperature, "max_new_tokens": max_tokens, "top_k": top_k, "load_in_8bit": True}
+                    temperature = 0.6,
+                    max_new_tokens = 512,
+                    top_k = 5,
+                    load_in_8bit = True,
+                )
                 print('got-it')
                 result = chat(question, llm, memory, db_retriever, prompt)
                 print(result)
