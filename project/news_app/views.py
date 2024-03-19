@@ -1,3 +1,4 @@
+import os
 import json
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseBadRequest
@@ -12,6 +13,7 @@ from langchain_community.llms.huggingface_endpoint import HuggingFaceEndpoint
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
+from langchain_together import Together
 # Create your views here.
 
 def home_page(request):
@@ -98,6 +100,7 @@ def chat_with_bot(request):
                 # chunk_overlap=100,
                 # length_function=len
                 # )
+
                 print('yo')
                 # chunks = text_splitter.split_text(text_data)
 
@@ -111,26 +114,29 @@ def chat_with_bot(request):
                 for i, chunk in enumerate(chunked_data, start=1):
                     db = FAISS.from_texts(chunk, embeddings)
                     faissdict_db[f'db{i}'] = db
+                    print(f'db{i} the leg - {len(chunk)}')
 
                 print(faissdict_db)
+                print(faissdict_db['db1'])
 
                 merged_db = faissdict_db['db1']
                 for db_name, db in faissdict_db.items():
-                    if db_name != 'db1':
+                    if db_name!= 'db1':
                         merged_db.merge_from(db)
+
+                if merged_db == db:
+                    print('\n\n\nL\n\n\n')
 
                 print('merged_db completed')
 
                 memory = ConversationBufferMemory(memory_key='chat_history')
-                db_retriever = db.as_retriever(search_type="similarity",search_kwargs={"k": 4})
-#  after the selective top headlines give detail on topic user demand
+                db_retriever = merged_db.as_retriever(search_type="similarity",search_kwargs={"k": 4})
+                #  after the selective top headlines give detail on topic user demand
+                # markets up/down by %, data science, AI, Machine learning news and
                 prompt_template = """<s>[INST]
-                You are a professional news reporter specializing in covering top headlines. You will delve into complex and potentially contentious topics and transparency ignoring the could be advertisement. Your focus should be on markets up down by %, data science, AI, Machine learning news and top news in technology, market, and business.
+                You are a talkative chat bot professional in  news reporter specializing in covering top headlines. You will delve into complex and potentially contentious topics and transparency ignoring the could be advertisement. Your focus should be on top news in technology, market, and business by relevance and importance.
                 [
                 ** Top headlines **
-                1. - <b>headline from context</b>\n
-                2. - <b>headline from context</b>\n
-                3. - <b>headline from context</b>\n
                 ]
                 this is sample blueprint for how should you answer[headlines in bold] and don't forgot to add "\n" before new line. The aim is to uncover top and exciting news with short and summarized information, your primary objective is to provide accurate and concise headline followup with 1-2 line description on headline, based on the user's questions and remember to keep it short. "Do not generate your own questions and unnecessary detail." You will adhere strictly to the instructions provided, while avoiding unnecessary details. Your responses will be brief, to the point. If a question falls outside the given context, just say don't know. You will prioritize the user's query and refrain from adding additional information. The aim is to deliver professional, precise, and contextually relevant answer pertaining to the context, don't pose any self question and aten user query with precis information.
                 CONTEXT: {context}
@@ -141,15 +147,25 @@ def chat_with_bot(request):
                 """
                 prompt = PromptTemplate(template=prompt_template,
                                         input_variables=['context', 'question', 'chat_history'])
-                llm_model = "mistralai/Mixtral-8x7B-Instruct-v0.1"
-                llm = HuggingFaceEndpoint(
-                    repo_id=llm_model,
-                    # model_kwargs={"temperature": temperature, "max_new_tokens": max_tokens, "top_k": top_k, "load_in_8bit": True}
-                    temperature = 0.6,
-                    max_new_tokens = 1024,
-                    top_k = 5,
-                    load_in_8bit = True,
-                )
+
+                TOGETHER_AI_API = os.environ['TOGETHER_AI_API']
+                llm = Together(
+                model="mistralai/Mistral-7B-Instruct-v0.2",
+                temperature=0.5,
+                max_tokens=1024,
+                together_api_key=f"{TOGETHER_AI_API}"
+
+            )
+
+                # llm_model = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+                # llm = HuggingFaceEndpoint(
+                #     repo_id=llm_model,
+                #     # model_kwargs={"temperature": temperature, "max_new_tokens": max_tokens, "top_k": top_k, "load_in_8bit": True}
+                #     temperature = 0.6,
+                #     max_new_tokens = 1024,
+                #     top_k = 5,
+                #     load_in_8bit = True,
+                # )
                 print('got-it')
                 result = chat(question, llm, memory, db_retriever, prompt)
                 print(result)
