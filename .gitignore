@@ -1,4 +1,7 @@
 news_env/
-**/.env/
+
+.env
+
 **/__pycache__/
+
 project/news_app/scraper.py/
