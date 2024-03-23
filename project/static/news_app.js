@@ -121,72 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-
-
-
-
-
-    // //     // Send the user's message to the server
-    //     fetch("http://localhost:8000/chat_with_bot/", { // Update the URL as needed
-    //         method: "POST",
-    //         body: JSON.stringify({ message }),
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             "X-CSRFToken": getCookie("csrftoken"),
-    //         },
-    //     })
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             // Display the response from the server in the chat
-    //             chatMessages.innerHTML += `<div><strong>User:</strong> ${message}</div>`;
-    //             chatMessages.innerHTML += `<div><strong>Bot:</strong> ${data.output}</div>`;
-    //             messageInput.value = "";
-    //         })
-    //         .catch((error) => {
-    //             console.error("Error sending message:", error);
-    //         });
-    // });
-
-    // sendButtonpdf.addEventListener("click", function() {
-    //     var pdfmessage = userInputpdf.value;
-    //     if (pdfmessage.trim() !== "") {
-
-    //         // Get the send URL from the data attribute
-    //         // const sendUrl = sendButtonpdf.getAttribute("data-send-url");
-    //         console.log(pdfmessage)
-    //         userInputpdf.value = "";
-    //         // You can add AJAX code here to send the user message to the server
-    //             // Send user message to server using AJAX
-    //             sendUserMessageToServer(pdfmessage);
-    //         }
-    //     });
-
-                // Example POST method implementation:
-        // async function postData(url = "http://localhost:8000/bot/", data = {"messagee": message}) {
-        //     const response = await fetch(url, {
-        //     method: "POST", headers: {
-        //         "Content-Type": "application/json",
-        //     }, body: JSON.stringify(data),
-        //     });
-        //     return response.json();
-        // }
-
-        // sendButtonpdf.addEventListener("click", async ()=>{
-        //     userMessage = document.getElementById("user-input").value;
-        //     document.getElementById("user-input").value = "";
-        //     document.querySelector(".right2").style.display = "block"
-        //     document.querySelector(".right1").style.display = "none"
-
-        //     question1.innerHTML = userMessage;
-        //     question2.innerHTML = userMessage;
-
-        //     // Get the answer and populate it!
-        //     let result = await postData("http://127.0.0.1:8000/bot/", {"question": userMessage})
-        //     solution.innerHTML = result.answer
-        // })
-
-
-
         userInputpdf.addEventListener('keydown', function (event) {
             var pdfmessage = userInputpdf.value;
             if (event.key === 'Enter' && !event.shiftKey) {
@@ -198,14 +132,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 userInputpdf.value = '';
             }
         });
-
-        // userInputpdf.addEventListener("keydown", function(event) {
-        //     if (event.key === "Enter") {
-
-        // });
-
-
-
 
         console.log(pdf_text);
     function sendpdfToServer(pdf_text) {
@@ -226,7 +152,6 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error:", error);
         });
     }
-
     // Function to get CSRF token from cookies
     function getCookie(name) {
         const value = `; ${document.cookie}`;
