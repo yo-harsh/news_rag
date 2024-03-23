@@ -6,7 +6,7 @@ The project uses RAG(Retrieval Augmented Generation) for content generation chat
 
 
 ```
-![App](https://github.com/[yo-harsh]/[news_rag]/blob/[dev]/news_rag.png?raw=true)
+![App](https://github.com/[yo-harsh]/[news_rag]/blob/[dev]/news_app.png?raw=true)
 ```
 
 
