@@ -1,7 +1,7 @@
 news_env/
 .env
 **/__pycache__/
-scraper.py
+project/news_app/scraper.py
 project/static/raw.js
 project/static/pow.js
 project/static/chat.js
