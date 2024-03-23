@@ -1,9 +1,14 @@
-
 # News_RAG
 
 The project uses RAG(Retrieval Augmented Generation) for content generation chat bot.
 
 - RAG is ... before knowing rag you must know about llms which comes under GEN AI and used for text generation, RAG is just adding your layer off context to llms in that way that llms uses provided context to answer any query not the data they trained on.
+
+
+```
+![App](https://github.com/[yo-harsh]/[news_rag]/blob/[dev]/news_rag.png?raw=true)
+```
+
 
 ## Docker Installation [🔗](https://docs.docker.com/engine/install/)
 
